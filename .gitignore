@@ -1,6 +1,8 @@
 **/Debug/
 **/Release/
 
+*.launch
+
 #language.settings.xml
 #org.eclipse.core.resources.prefs
 
