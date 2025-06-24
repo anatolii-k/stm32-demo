@@ -10,11 +10,13 @@
 #include <stdint.h>
 #include "stm32f446xx.h"
 
-#define LED_ODR GPIO_ODR_OD5
+#define LED_SET_BIT    GPIO_BSRR_BS5
+#define LED_RESET_BIT  GPIO_BSRR_BR5
 #define SWICTH_BUTTON_IDR GPIO_IDR_ID13
 #define BUTTON_IS_PRESSED (0)
 
 static int lastButtonState = 1;
+static int ledState = 0;
 
 void setup(){
 	// RCC enable
@@ -40,6 +42,10 @@ void makeDelay()
 int main(void)
 {
 	setup();
+
+	GPIOA->BSRR = LED_RESET_BIT;
+	ledState = 0;
+
 	for(;;)
 	{
 		int buttonState = GPIOC->IDR & SWICTH_BUTTON_IDR ? 1 : 0;
@@ -48,7 +54,8 @@ int main(void)
 			lastButtonState = buttonState;
 			if(buttonState == BUTTON_IS_PRESSED)
 			{
-				GPIOA->ODR ^= LED_ODR;
+				ledState ^= 1;
+				GPIOA->BSRR = ledState ? LED_SET_BIT : LED_RESET_BIT;
 			}
 		}
 		makeDelay();
